@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi Billets Air France</title>
+    <title>Suivi des Billets d'Avion</title>
     <style>
         :root {
-            --af-blue: #002157;
-            --af-red: #E60028;
-            --bg-color: #f4f6f9;
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --bg-color: #f1f5f9;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             margin: 0;
             padding: 20px;
@@ -23,264 +23,174 @@
         }
 
         h1 {
-            color: var(--af-blue);
+            color: #1e293b;
             text-align: center;
-            margin-bottom: 5px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .subtitle {
-            color: #64748b;
             margin-bottom: 30px;
-            text-align: center;
         }
 
-        /* Container principal côte à côte et responsive */
+        /* Container principal en Côte-à-Côte (responsive) */
         .players-container {
             display: flex;
-            gap: 25px;
+            gap: 30px;
             width: 100%;
             max-width: 1000px;
             justify-content: center;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Aligne verticalement sur smartphone */
         }
 
         .player-card {
             background: white;
             border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 25px -5px rgba(0, 33, 87, 0.1);
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             flex: 1;
-            min-width: 320px;
-            max-width: 460px;
+            min-width: 300px;
+            max-width: 450px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            border-top: 4px solid var(--af-blue);
-        }
-
-        /* Input du Nom */
-        .name-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
+            transition: all 0.3s ease;
         }
 
         .name-input {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             text-align: center;
             border: none;
             border-bottom: 2px dashed #cbd5e1;
             padding: 5px;
             width: 80%;
-            margin-bottom: 25px;
-            color: var(--af-blue);
-            text-transform: uppercase;
+            margin-bottom: 15px;
+            color: #334155;
         }
 
         .name-input:focus {
             outline: none;
-            border-bottom-color: var(--af-red);
+            border-bottom-color: var(--primary-color);
         }
 
-        /* CONTENEUR DU BILLET DOUBLE LAYER */
-        .ticket-wrapper {
+        /* Design du Billet d'avion */
+        .ticket {
+            width: 100%;
+            height: 160px;
+            background: #e2e8f0; /* Fond par défaut */
+            border-radius: 12px;
             position: relative;
-            width: 100%;
-            height: 180px;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            background-color: white;
-            overflow: hidden;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
-
-        /* STRUCTURE COMMUNE AUX DEUX BILLETS (Grisé et Couleur) */
-        .ticket-base {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 14px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 15px;
-            box-sizing: border-box;
-            user-select: none;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 2px solid #cbd5e1;
+            transition: all 0.5s ease;
         }
 
-        /* Encoches style ticket de transport */
-        .ticket-base::before, .ticket-base::after {
+        /* Style quand le billet est à 100% */
+        .ticket.completed {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #1d4ed8;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+            animation: ticketAppears 0.5s ease-out forwards;
+        }
+
+        @keyframes ticketAppears {
+            0% { transform: scale(0.9); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Décoration style ticket d'avion (les encoches sur les côtés) */
+        .ticket::before, .ticket::after {
             content: '';
             position: absolute;
             top: 50%;
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             background-color: white;
             border-radius: 50%;
             transform: translateY(-50%);
-            z-index: 5;
         }
-        .ticket-base::before { left: -8px; }
-        .ticket-base::after { right: -8px; }
+        .ticket::before { left: -10px; }
+        .ticket::after { right: -10px; }
 
-        /* Ligne de pointillé */
-        .ticket-divider {
-            position: absolute;
-            right: 28%;
-            top: 0;
-            bottom: 0;
-            border-left: 2px dashed rgba(255,255,255,0.25);
-            z-index: 4;
-        }
-
-        /* 1. BILLET DU DESSOUS : Version grisée en arrière-plan */
-        .ticket-bg-gray {
-            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
-            color: #cbd5e1;
+        .ticket-content {
+            text-align: center;
             z-index: 1;
-        }
-        .ticket-bg-gray .logo-af span, .ticket-bg-gray .seat-text {
-            color: #cbd5e1 !important;
-        }
-
-        /* 2. BILLET DU DESSUS : Version officielle Air France colorée et nette */
-        .ticket-fg-color {
-            background: linear-gradient(135deg, var(--af-blue) 0%, #001233 100%);
-            color: white;
-            z-index: 2;
-            
-            /* L'effet magique : Révélation progressive de gauche à droite */
-            /* Initialement caché (0%) via un masque dégradé linéaire */
-            clip-path: polygon(0 0, 0% 0, 0% 100%, 0 100%);
-            transition: clip-path 0.4s ease-out;
+            opacity: 0.4;
+            transition: opacity 0.3s;
         }
 
-        /* Éléments internes du design */
-        .ticket-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 8px;
+        .ticket.completed .ticket-content {
+            opacity: 1;
         }
 
-        .logo-af {
-            font-weight: 800;
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-        }
-        .logo-af span {
-            color: var(--af-red);
-            font-weight: 900;
-            margin-left: 2px;
-        }
-
-        .ticket-type {
-            font-size: 0.65rem;
-            background: rgba(255,255,255,0.15);
-            padding: 3px 8px;
-            border-radius: 20px;
-            letter-spacing: 1px;
-        }
-
-        .ticket-body {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0;
-        }
-
-        .airport-code {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .ticket-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 2px;
             margin: 0;
         }
-        .airport-label {
-            font-size: 0.65rem;
-            opacity: 0.7;
-            display: block;
-        }
 
-        .flight-icon {
-            font-size: 1.4rem;
-        }
-
-        .ticket-footer {
-            font-size: 0.75rem;
+        .ticket-status {
+            margin-top: 10px;
+            font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: rgba(255,255,255,0.08);
-            padding: 6px 10px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
         }
 
-        .passenger-name {
-            font-weight: bold;
+        /* Remplissage de progression dans le billet */
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background-color: #93c5fd;
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+        .ticket.completed .progress-fill {
+            display: none; /* Cache la barre de progression intermédiaire à 100% */
         }
 
-        /* État quand le conteneur atteint 100% de progression */
-        .ticket-wrapper.completed {
-            transform: scale(1.03);
-            box-shadow: 0 15px 30px rgba(230, 0, 40, 0.25);
-        }
-        .ticket-wrapper.completed .ticket-fg-color {
-            border: 2px solid var(--af-red);
-        }
-
-        /* Contrôles de progression */
+        /* Contrôles (Boutons + / -) */
         .controls {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-top: 25px;
+            margin-top: 20px;
             width: 100%;
             justify-content: center;
         }
 
         .btn {
-            background-color: white;
-            border: 2px solid #e2e8f0;
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--af-blue);
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            user-select: none;
             transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .btn:hover {
-            border-color: var(--af-blue);
-            background-color: #f8fafc;
         }
 
         .btn:active {
             transform: scale(0.9);
+            background-color: #cbd5e1;
         }
 
         .progress-text {
-            font-size: 1.8rem;
-            font-weight: 800;
-            min-width: 80px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            min-width: 60px;
             text-align: center;
-            color: var(--af-blue);
         }
 
+        /* Message d'encouragement */
         .motivation-msg {
             margin-top: 15px;
             font-size: 0.9rem;
@@ -293,51 +203,18 @@
 </head>
 <body>
 
-    <h1>Air France</h1>
-    <div class="subtitle">Progression de vol de gauche à droite (Côte-à-Côte)</div>
+    <h1>✈️ Objectif Décollage ! ✈️</h1>
 
     <div class="players-container">
-        
         <div class="player-card">
-            <span class="name-label">Passager 1</span>
-            <input type="text" class="name-input" id="inputName1" value="Aventurier 1" oninput="updateName(1)">
+            <input type="text" class="name-input" value="Aventurier 1" onchange="saveData()">
             
-            <div class="ticket-wrapper" id="wrapper1">
-                
-                <div class="ticket-base ticket-bg-gray">
-                    <div class="ticket-divider"></div>
-                    <div class="ticket-header">
-                        <div class="logo-af">AIRFRANCE<span>/</span></div>
-                        <div class="ticket-type">BOARDING PASS</div>
-                    </div>
-                    <div class="ticket-body">
-                        <div><p class="airport-code">PAR <span class="airport-label">Paris</span></p></div>
-                        <div class="flight-icon">✈️</div>
-                        <div style="text-align: right; margin-right: 32%;"><p class="airport-code">EVN <span class="airport-label">Evasion</span></p></div>
-                    </div>
-                    <div class="ticket-footer">
-                        <div>Nom : <span class="passenger-name" id="ticketName1Gray">Aventurier 1</span></div>
-                        <div class="seat-text" style="font-weight: bold;">SIÈGE --</div>
-                    </div>
+            <div class="ticket" id="ticket1">
+                <div class="progress-fill" id="fill1"></div>
+                <div class="ticket-content">
+                    <p class="ticket-title">BILLET D'AVION</p>
+                    <p class="ticket-status" id="status1">En attente...</p>
                 </div>
-
-                <div class="ticket-base ticket-fg-color" id="ticketColor1">
-                    <div class="ticket-divider"></div>
-                    <div class="ticket-header">
-                        <div class="logo-af">AIRFRANCE<span>/</span></div>
-                        <div class="ticket-type">BOARDING PASS</div>
-                    </div>
-                    <div class="ticket-body">
-                        <div><p class="airport-code">PAR <span class="airport-label">Paris</span></p></div>
-                        <div class="flight-icon" style="animation: bounce 2s infinite ease-in-out;">✈️</div>
-                        <div style="text-align: right; margin-right: 32%;"><p class="airport-code">EVN <span class="airport-label">Evasion</span></p></div>
-                    </div>
-                    <div class="ticket-footer">
-                        <div>Nom : <span class="passenger-name" id="ticketName1Color">Aventurier 1</span></div>
-                        <div id="seat1" class="seat-text" style="font-weight: bold; color: var(--af-red);">SIÈGE --</div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="controls">
@@ -346,49 +223,18 @@
                 <button class="btn" onclick="updateProgress(1, 1)">+</button>
             </div>
             
-            <div class="motivation-msg" id="msg1">Prêt pour l'enregistrement ?</div>
+            <div class="motivation-msg" id="msg1">C'est le moment de commencer !</div>
         </div>
 
         <div class="player-card">
-            <span class="name-label">Passager 2</span>
-            <input type="text" class="name-input" id="inputName2" value="Aventurier 2" oninput="updateName(2)">
+            <input type="text" class="name-input" value="Aventurier 2" onchange="saveData()">
             
-            <div class="ticket-wrapper" id="wrapper2">
-                
-                <div class="ticket-base ticket-bg-gray">
-                    <div class="ticket-divider"></div>
-                    <div class="ticket-header">
-                        <div class="logo-af">AIRFRANCE<span>/</span></div>
-                        <div class="ticket-type">BOARDING PASS</div>
-                    </div>
-                    <div class="ticket-body">
-                        <div><p class="airport-code">PAR <span class="airport-label">Paris</span></p></div>
-                        <div class="flight-icon">✈️</div>
-                        <div style="text-align: right; margin-right: 32%;"><p class="airport-code">EVN <span class="airport-label">Evasion</span></p></div>
-                    </div>
-                    <div class="ticket-footer">
-                        <div>Nom : <span class="passenger-name" id="ticketName2Gray">Aventurier 2</span></div>
-                        <div class="seat-text" style="font-weight: bold;">SIÈGE --</div>
-                    </div>
+            <div class="ticket" id="ticket2">
+                <div class="progress-fill" id="fill2"></div>
+                <div class="ticket-content">
+                    <p class="ticket-title">BILLET D'AVION</p>
+                    <p class="ticket-status" id="status2">En attente...</p>
                 </div>
-
-                <div class="ticket-base ticket-fg-color" id="ticketColor2">
-                    <div class="ticket-divider"></div>
-                    <div class="ticket-header">
-                        <div class="logo-af">AIRFRANCE<span>/</span></div>
-                        <div class="ticket-type">BOARDING PASS</div>
-                    </div>
-                    <div class="ticket-body">
-                        <div><p class="airport-code">PAR <span class="airport-label">Paris</span></p></div>
-                        <div class="flight-icon" style="animation: bounce 2s infinite ease-in-out;">✈️</div>
-                        <div style="text-align: right; margin-right: 32%;"><p class="airport-code">EVN <span class="airport-label">Evasion</span></p></div>
-                    </div>
-                    <div class="ticket-footer">
-                        <div>Nom : <span class="passenger-name" id="ticketName2Color">Aventurier 2</span></div>
-                        <div id="seat2" class="seat-text" style="font-weight: bold; color: var(--af-red);">SIÈGE --</div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="controls">
@@ -396,45 +242,35 @@
                 <span class="progress-text" id="text2">0%</span>
                 <button class="btn" onclick="updateProgress(2, 1)">+</button>
             </div>
-            
-            <div class="motivation-msg" id="msg2">L'aventure n'attend que vous !</div>
-        </div>
 
+            <div class="motivation-msg" id="msg2">Prêt pour l'aventure ?</div>
+        </div>
     </div>
 
     <script>
+        // Phrases d'encouragement selon le niveau de progression
         const messages = {
-            start: ["En attente au comptoir...", "Le voyage commence ici ! 🌍"],
-            mid: ["Décollage imminent ! Vers la mi-parcours 💪", "Billet en cours de coloration... 🎨"],
-            almost: ["Approche finale ! Préparez vos bagages ! 🧳", "Plus que quelques pourcentages ! ⚡"],
-            done: ["EMBARQUEMENT IMMÉDIAT ! 🎉 Bon vol sur Air France !", "Billet validé à 100% ! Direction les vacances ! 🎆"]
+            start: ["Le premier pas est le plus important !", "C'est parti ! 🌍"],
+            mid: ["À mi-chemin ! On ne lâche rien 💪", "Ça sent bientôt les vacances ! 🏖️"],
+            almost: ["Presque arrivé ! Préparez les valises ! 🧳", "Plus que quelques efforts ! ⚡"],
+            done: ["EMBARQUEMENT IMMÉDIAT ! 🎉✈️", "Billet validé ! Bon voyage ! 🎆"]
         };
 
-        let data = JSON.parse(localStorage.getItem('afSlideProgress')) || {
+        // Charger les données sauvegardées ou utiliser les valeurs par défaut
+        let data = JSON.parse(localStorage.getItem('flightProgress')) || {
             p1: { name: "Aventurier 1", val: 0 },
             p2: { name: "Aventurier 2", val: 0 }
         };
 
-        // Configuration initiale
-        document.getElementById('inputName1').value = data.p1.name;
-        document.getElementById('inputName2').value = data.p2.name;
+        // Initialisation au chargement de la page
+        document.querySelectorAll('.name-input')[0].value = data.p1.name;
+        document.querySelectorAll('.name-input')[1].value = data.p2.name;
         render(1);
         render(2);
 
-        function updateName(player) {
-            let p = player === 1 ? data.p1 : data.p2;
-            let inputVal = document.getElementById(`inputName${player}`).value;
-            p.name = inputVal || `Passager ${player}`;
-            
-            // Met à jour les calques gris ET couleur simultanément
-            document.getElementById(`ticketName${player}Gray`).innerText = p.name;
-            document.getElementById(`ticketName${player}Color`).innerText = p.name;
-            saveData();
-        }
-
         function updateProgress(player, amount) {
             let p = player === 1 ? data.p1 : data.p2;
-            p.val = Math.min(100, Math.max(0, p.val + amount));
+            p.val = Math.min(100, Math.max(0, p.val + amount)); // Garde entre 0 et 100
             render(player);
             saveData();
         }
@@ -442,35 +278,37 @@
         function render(player) {
             let p = player === 1 ? data.p1 : data.p2;
             
-            const wrapper = document.getElementById(`wrapper${player}`);
-            const ticketColor = document.getElementById(`ticketColor${player}`);
+            // Éléments du DOM
+            const fill = document.getElementById(`fill${player}`);
             const text = document.getElementById(`text${player}`);
+            const ticket = document.getElementById(`ticket${player}`);
+            const status = document.getElementById(`status${player}`);
             const msg = document.getElementById(`msg${player}`);
-            const seat = document.getElementById(`seat${player}`);
 
+            // Mise à jour graphique
             text.innerText = `${p.val}%`;
+            fill.style.width = `${p.val}%`;
 
-            // EFFET MAGIQUE : Changement des coordonnées du polygone de découpe (clip-path)
-            // Dévoile le billet coloré de 0% à 100% de largeur, de haut en bas.
-            ticketColor.style.clipPath = `polygon(0 0, ${p.val}% 0, ${p.val}% 100%, 0 100%)`;
-
-            // Gestion de la complétion à 100%
+            // Gestion du cap des 100% (Remplissage et style billet d'avion)
             if (p.val === 100) {
-                wrapper.classList.add('completed');
-                seat.innerText = `SIÈGE 0${player}A`;
+                ticket.classList.add('completed');
+                status.innerText = `Validé pour : ${p.name}`;
                 msg.innerHTML = `<strong>${messages.done[Math.floor(Math.random() * messages.done.length)]}</strong>`;
             } else {
-                wrapper.classList.remove('completed');
-                seat.innerText = "SIÈGE --";
+                ticket.classList.remove('completed');
+                status.innerText = "En attente...";
                 
-                if (p.val <= 15) msg.innerText = messages.start[Math.floor(Math.random() * messages.start.length)];
-                else if (p.val > 15 && p.val < 80) msg.innerText = messages.mid[Math.floor(Math.random() * messages.mid.length)];
-                else if (p.val >= 80) msg.innerText = messages.almost[Math.floor(Math.random() * messages.almost.length)];
+                // Sélection du message de motivation
+                if (p.val <= 10) msg.innerText = messages.start[0];
+                else if (p.val > 10 && p.val < 75) msg.innerText = messages.mid[Math.floor(Math.random() * messages.mid.length)];
+                else if (p.val >= 75) msg.innerText = messages.almost[Math.floor(Math.random() * messages.almost.length)];
             }
         }
 
         function saveData() {
-            localStorage.setItem('afSlideProgress', JSON.stringify(data));
+            data.p1.name = document.querySelectorAll('.name-input')[0].value;
+            data.p2.name = document.querySelectorAll('.name-input')[1].value;
+            localStorage.setItem('flightProgress', JSON.stringify(data));
         }
     </script>
 </body>
